@@ -7,11 +7,11 @@ namespace Algos.Source.Pools
         /// <summary>
         /// Set create method which will create new instances.
         /// </summary>
-        Func<T> CreateMethod { set; }
+        Func<T> CreateMethod { set; get; }
         /// <summary>
         /// Set creator for the strategy of creating, putting and getting instances.
         /// </summary>
-        ICreator<T> Creator { set; }
+        ICreator<T> Creator { set; get; }
         /// <summary>
         /// Get or create item from the pool.
         /// </summary>
