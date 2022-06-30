@@ -23,7 +23,7 @@ namespace Algos.Source.Pools
         }
 
         /// <summary>
-        /// Get or creates and get a pool with given type.
+        /// Gets or creates and returns a pool with given type.
         /// </summary>
         /// <param name="capacity">Initial capacity of the pool.</param>
         /// <param name="prewarm">If 'true' will be created the number of instances equal to the 'capacity' of the pool.</param>
@@ -41,7 +41,7 @@ namespace Algos.Source.Pools
         }
 
         /// <summary>
-        /// Get or creates and get a pool with given type.
+        /// Gets or creates and returns a pool with given type.
         /// </summary>
         /// <param name="capacity">Initial capacity of the pool.</param>
         /// <param name="creator">Instance of ICreator which will be used for creating an instance of pool's type.</param>
@@ -58,7 +58,7 @@ namespace Algos.Source.Pools
         }
 
         /// <summary>
-        /// Get or creates and get a pool with given type.
+        /// Gets or creates and returns a pool with given type.
         /// </summary>
         /// <param name="capacity">Initial capacity of the pool.</param>
         /// <param name="createMethod">Method which will be used for creating an instance of pool's type.</param>
