@@ -26,28 +26,34 @@ namespace Algos.Source.Pools
     }
     
     /// <summary>
-    /// Responsibilities:
-    /// 1. How the instance of the stored type should be created, when the pool doesn't have enough instances.
-    /// 2. How instance should be properly initialized during getting from the pool.
-    /// 3. How instance should be properly deactivated during storing it in a pool. 
+    /// Processes:
+    /// 1. How an instance is created.
+    /// 2. How an instance is put to a pool.
+    /// 3. How an instance is got from a pool.
+    /// 4. How an instance is disposed.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
     public interface ICreator<T> : IDisposable
     {
         /// <summary>
-        /// Invokes when instance of poolable item has to be created.
+        /// It is invoked when an instance of a poolable item is going to be created.
         /// </summary>
         T OnCreate();
         
         /// <summary>
-        /// Invokes when item is going to be stored in the pool.
+        /// It is invoked when an item is put in a pool.
         /// </summary>
         void OnToPool(T t);
         
         /// <summary>
-        /// Invokes when item is going to be got from the pool.
+        /// It is invoked when an item is taken from a pool.
         /// </summary>
         void OnFromPool(T t);
+
+        /// <summary>
+        /// It is invoked when an item gets destroyed while clearing a pool.
+        /// </summary>
+        /// <param name="t"></param>
+        void OnDispose(T t);
     }
     
     public interface IPoolGeneric

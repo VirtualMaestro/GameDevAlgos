@@ -50,9 +50,9 @@ namespace Algos.Source.Pools
             }
         }
 
-        public Pool(int initialCapacity = 5)
+        public Pool(int initialCapacity = 16)
         {
-            _initialCapacity = initialCapacity < 5 ? 5 : initialCapacity;
+            _initialCapacity = initialCapacity < 4 ? 4 : initialCapacity;
             _storage = new T[_initialCapacity];
         }
 
@@ -119,14 +119,14 @@ namespace Algos.Source.Pools
         {
             _freeToPutIndex = 0;
 
-            if (shrink)
-            {
-                _storage = new T[_initialCapacity];
-                return;
-            }
-
             for (var i = 0; i < _storage.Length; i++)
+            {
+                _creator?.OnDispose(_storage[i]);
                 _storage[i] = default;
+            }
+             
+            if (shrink)
+                _storage = new T[_initialCapacity];
         }
 
         public void Dispose()
