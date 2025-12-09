@@ -1,1 +1,5 @@
 .idea/
+/Algos.Tests/obj/
+/Algos.Tests/bin/
+/Algos/obj/
+/Algos/bin/

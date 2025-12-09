@@ -344,7 +344,7 @@ namespace Algos.Tests
         public void Pool_WithConstructorPrewarm_InitializesImmediately()
         {
             var creator = new TestCreator();
-            var pool = new Pool<TestItem>(10, creator, prewarm: true);
+            var pool = new Pool<TestItem>(10, creator, preWarm: true);
 
             Assert.Equal(10, pool.AvailableItems);
             Assert.Equal(10, creator.CreateCount);
@@ -475,6 +475,11 @@ namespace Algos.Tests
         private class TestPoolItem
         {
             public int Value { get; set; }
+        }
+
+        private class TestItem
+        {
+            public int Id { get; set; }
         }
 
         [Fact]
