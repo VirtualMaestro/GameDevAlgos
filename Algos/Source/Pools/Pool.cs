@@ -105,10 +105,10 @@ namespace Algos.Source.Pools
         public void PreWarm(int count)
         {
             if (count > Size)
-                _ResizePool(count - Size);
+                _ResizePool(count);
 
             if (count <= AvailableItems) return;
-            
+
             count -= AvailableItems;
 
             while (count-- > 0)
@@ -151,9 +151,9 @@ namespace Algos.Source.Pools
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void _ResizePool(int count)
+        private void _ResizePool(int newSize)
         {
-            var newOne = new T[_storage.Length + count];
+            var newOne = new T[newSize];
             Array.Copy(_storage, newOne, _storage.Length);
             _storage = newOne;
         }

@@ -134,7 +134,6 @@ namespace Algos.Tests
         [Fact]
         public void Put_WhenFull_ExpandsPool()
         {
-            // This test exposes the resizing bug!
             var pool = new Pool<TestItem>(4, () => new TestItem());
 
             // Fill the pool
@@ -144,12 +143,10 @@ namespace Algos.Tests
             Assert.Equal(4, pool.Size);
             Assert.True(pool.IsFull);
 
-            // Add one more - should expand
+            // Add one more - should expand (double the size)
             pool.Put(new TestItem());
 
-            // Bug: Size becomes 12 (4 + 8) instead of 8 (4 * 2)
-            // This test will fail with the current implementation
-            Assert.Equal(8, pool.Size); // Expected: doubled size
+            Assert.Equal(8, pool.Size); // Pool doubles in size: 4 -> 8
             Assert.Equal(5, pool.AvailableItems);
         }
 
@@ -394,27 +391,24 @@ namespace Algos.Tests
         [Fact]
         public void Pool_ResizeBehavior_MultipleExpansions()
         {
-            // Test the resize bug with multiple expansions
+            // Test that pool doubles in size on each expansion
             var pool = new Pool<TestItem>(4, () => new TestItem());
 
-            // First expansion: 4 -> should be 8
+            // First expansion: 4 -> 8 (fill 4, add 5th triggers expansion)
             for (int i = 0; i < 5; i++)
                 pool.Put(new TestItem());
 
             int sizeAfterFirst = pool.Size;
 
-            // Second expansion: 8 -> should be 16
+            // Second expansion: 8 -> 16 (fill remaining 3, add 4 more triggers expansion at item 9)
             for (int i = 0; i < 5; i++)
                 pool.Put(new TestItem());
 
             int sizeAfterSecond = pool.Size;
 
-            // With the bug: 4 -> 12 -> 36
-            // Without bug: 4 -> 8 -> 16
-            Assert.True(sizeAfterFirst == 8 || sizeAfterFirst == 12,
-                $"After first expansion: {sizeAfterFirst} (bug: 12, correct: 8)");
-            Assert.True(sizeAfterSecond <= 20,
-                $"After second expansion: {sizeAfterSecond} (should be reasonable)");
+            // Pool should double in size: 4 -> 8 -> 16
+            Assert.Equal(8, sizeAfterFirst);
+            Assert.Equal(16, sizeAfterSecond);
         }
 
         [Fact]
@@ -504,6 +498,7 @@ namespace Algos.Tests
         public void Get_DefaultCreator_CreatesPool()
         {
             var pools = Pools.I;
+            pools.DisposeAll(); // Ensure clean state
 
             var pool = pools.Get<TestPoolItem>();
 
@@ -515,6 +510,7 @@ namespace Algos.Tests
         public void Get_SameTypeTwice_ReturnsSamePool()
         {
             var pools = Pools.I;
+            pools.DisposeAll(); // Ensure clean state
 
             var pool1 = pools.Get<TestPoolItem>();
             var pool2 = pools.Get<TestPoolItem>();
@@ -526,6 +522,7 @@ namespace Algos.Tests
         public void Get_WithCreator_UsesCreator()
         {
             var pools = Pools.I;
+            pools.DisposeAll(); // Ensure clean state
             var creator = new TestCreator();
 
             var pool = pools.Get<TestItem>(10, creator);
@@ -537,6 +534,7 @@ namespace Algos.Tests
         public void Get_WithCreateMethod_UsesMethod()
         {
             var pools = Pools.I;
+            pools.DisposeAll(); // Ensure clean state
             Func<TestPoolItem> method = () => new TestPoolItem { Value = 42 };
 
             var pool = pools.Get<TestPoolItem>(10, method);
@@ -548,6 +546,7 @@ namespace Algos.Tests
         public void Get_WithPrewarm_PrewarmsPool()
         {
             var pools = Pools.I;
+            pools.DisposeAll(); // Ensure clean state
 
             var pool = pools.Get<TestPoolItem>(10, prewarm: true);
 
@@ -558,6 +557,7 @@ namespace Algos.Tests
         public void Has_ReturnsTrueWhenExists()
         {
             var pools = Pools.I;
+            pools.DisposeAll(); // Ensure clean state
             pools.Get<TestPoolItem>();
 
             var exists = pools.Has<TestPoolItem>();
@@ -569,6 +569,7 @@ namespace Algos.Tests
         public void Has_ReturnsFalseWhenNotExists()
         {
             var pools = Pools.I;
+            pools.DisposeAll(); // Ensure clean state
 
             var exists = pools.Has<PoolsTests>(); // Using test class itself
 
@@ -579,6 +580,7 @@ namespace Algos.Tests
         public void ClearAll_ClearsAllPools()
         {
             var pools = Pools.I;
+            pools.DisposeAll(); // Ensure clean state
             var pool1 = pools.Get<TestPoolItem>();
             var pool2 = pools.Get<TestItem>();
 
@@ -595,6 +597,7 @@ namespace Algos.Tests
         public void ClearAll_WithShrink_ShrinksAllPools()
         {
             var pools = Pools.I;
+            pools.DisposeAll(); // Ensure clean state
             var pool = pools.Get<TestPoolItem>(10);
             pool.PreWarm(20); // Expand
 
@@ -607,6 +610,7 @@ namespace Algos.Tests
         public void DisposeAll_RemovesAllPools()
         {
             var pools = Pools.I;
+            pools.DisposeAll(); // Ensure clean state
             pools.Get<TestPoolItem>();
 
             pools.DisposeAll();

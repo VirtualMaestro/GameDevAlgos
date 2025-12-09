@@ -230,15 +230,19 @@ namespace Algos.Tests
             cache.Add(4);
             cache.Add(5);
 
-            // Access item 2 (should move to front)
+            // Find iterates from front (most recently added) to back
+            // After adds: front=5, 4, 3, 2, back=1
+            // Searching for 2 will visit: 5, 4, 3, 2 (and stop)
             cache.Find((item, args) =>
             {
                 visitedItems.Add(item);
                 return item == 2;
             });
 
-            // The search should have visited items in order, finding 2 first (at the front)
-            Assert.Equal(2, visitedItems[0]);
+            // Verify iteration order: most recent first
+            Assert.Equal(5, visitedItems[0]);
+            Assert.Equal(4, visitedItems.Count); // Should visit 5, 4, 3, 2
+            Assert.Equal(2, visitedItems[3]); // Last visited should be 2
         }
 
         [Fact]
